@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "READCent.C": "cpp",
-        "DrawTGraph.C": "cpp"
+        "DrawTGraph.C": "cpp",
+        "generatorNEW.C": "cpp"
     }
 }

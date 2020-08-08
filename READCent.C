@@ -4,7 +4,7 @@
 #include <TGraphErrors.h>
 #include <TGraph.h>
 #include <TLegend.h>
-#include "/home/dim2/GIT/DrawTGraph.C"
+//#include "/home/dim2/GIT/DrawTGraph.C"
 
 TGraphErrors *grv4[Nb], *grv2[Nb], *grvMc[Nb], *grvEp[Nb];
 TGraphErrors *grIntv4[Nb], *grIntv2[Nb], *grIntvMc[Nb], *grIntvEp[Nb];
@@ -27,7 +27,7 @@ double sigmaXY(TH1F *X, TH1F *Y, TH1F *XY, double weight)
     return weight * RMS * RMS / (neff - 1);
 }
 
-void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40.root")
+void read(const char *infile, const char *savefile = "~/GIT/NoneFlow30_40.root")
 {
     // Setting up global variables for the plot
     gROOT->SetStyle("Pub");
@@ -90,99 +90,53 @@ void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40
     double Diffsv2[Nb][NN];
     double Diffsv4[Nb][NN];
 
-    char strvObs[200];
-    char strRES[200];
-    char strCOVsv2sv2[200];
-    char strCOVsv2sv4[200];
-    char strCOVsv4sv2[200];
-    char strCOVsv4sv4[200];
-    char DiffCOVsv2sv4[200];
-    char strE[200];
-    char strW[200];
-    char strMC[200];
-
-    char strCOSp1[200];
-    char strSINp1[200];
-    char strCOSp1f2[200];
-    char strSINp1f2[200];
-    char strCOSp1f2mf3[200];
-    char strSINp1f2mf3[200];
-    char strCOSp1mf2mf3[200];
-    char strSINp1mf2mf3[200];
-    char hBinPt[200];
     char str[200];
-    const char *STR;
+
     TFile *f = new TFile(infile);
     for (int k = 0; k < Nb; k++)
     {
         sprintf(str, "%sCENT%d_%d", "sv2", k * 10, (k + 1) * 10);
-        STR = (char *)str;
-        SV2[k] = (TH1F *)f->Get(STR);
+        SV2[k] = (TH1F *)f->Get(str);
 
         sprintf(str, "%sCENT%d_%d", "sv4", k * 10, (k + 1) * 10);
-        STR = (char *)str;
-        SV4[k] = (TH1F *)f->Get(STR);
+        SV4[k] = (TH1F *)f->Get(str);
 
         sprintf(str, "%sCENT%d_%d", "sv2_sv4", k * 10, (k + 1) * 10);
-        STR = (char *)str;
-        SV2_SV4[k] = (TH1F *)f->Get(STR);
+        SV2_SV4[k] = (TH1F *)f->Get(str);
 
         sprintf(str, "%sCENT%d_%d", "mc", k * 10, (k + 1) * 10);
-        STR = (char *)str;
-        HMC[k] = (TH1F *)f->Get(STR);
+        HMC[k] = (TH1F *)f->Get(str);
 
         sprintf(str, "%sCENT%d_%d", "HRES", k * 10, (k + 1) * 10);
-        STR = (char *)str;
-        HRES[k] = (TH1F *)f->Get(STR);
+        HRES[k] = (TH1F *)f->Get(str);
 
         sprintf(str, "%sCENT%d_%d", "Vobs", k * 10, (k + 1) * 10);
-        STR = (char *)str;
-        HVobs[k] = (TH1F *)f->Get(STR);
+        HVobs[k] = (TH1F *)f->Get(str);
+
         RMSbinCent[k] = 0;
         for (int m = 0; m < NN; m++)
         {
-            sprintf(strE, "%s%d_CENT%d_%d", "sv2Diff", m, k * 10, (k + 1) * 10);
-            sprintf(strW, "%s%d_CENT%d_%d", "sv4Diff", m, k * 10, (k + 1) * 10);
-            sprintf(strMC, "%s%d_CENT%d_%d", "DiffMC", m, k * 10, (k + 1) * 10);
-            sprintf(strCOVsv2sv2, "%s%d_CENT%d_%d", "SV2_DiffSV2", m, k * 10, (k + 1) * 10);
-            sprintf(strCOVsv2sv4, "%s%d_CENT%d_%d", "SV2_DiffSV4", m, k * 10, (k + 1) * 10);
-            sprintf(strCOVsv4sv2, "%s%d_CENT%d_%d", "SV4_DiffSV2", m, k * 10, (k + 1) * 10);
-            sprintf(strCOVsv4sv4, "%s%d_CENT%d_%d", "SV4_DiffSV4", m, k * 10, (k + 1) * 10);
-            sprintf(DiffCOVsv2sv4, "%s%d_CENT%d_%d", "DiffSV2_DiffSV4", m, k * 10, (k + 1) * 10);
-
-            sprintf(strCOSp1, "%s%d_CENT%d_%d", "COSp1", m, k * 10, (k + 1) * 10);
-            sprintf(strCOSp1f2, "%s%d_CENT%d_%d", "COSp1f2", m, k * 10, (k + 1) * 10);
-            sprintf(strCOSp1f2mf3, "%s%d_CENT%d_%d", "COSp1f2mf3", m, k * 10, (k + 1) * 10);
-            sprintf(strCOSp1mf2mf3, "%s%d_CENT%d_%d", "COSp1mf2mf3", m, k * 10, (k + 1) * 10);
-            sprintf(strSINp1, "%s%d_CENT%d_%d", "SINp1", m, k * 10, (k + 1) * 10);
-            sprintf(strSINp1f2, "%s%d_CENT%d_%d", "SINp1f2", m, k * 10, (k + 1) * 10);
-            sprintf(strSINp1f2mf3, "%s%d_CENT%d_%d", "SINp1f2mf3", m, k * 10, (k + 1) * 10);
-            sprintf(strSINp1mf2mf3, "%s%d_CENT%d_%d", "SINp1mf2mf3", m, k * 10, (k + 1) * 10);
+            sprintf(str, "%s%d_CENT%d_%d", "sv2Diff", m, k * 10, (k + 1) * 10);
+            DiffSV2[k][m] = (TH1F *)f->Get(str);
+            sprintf(str, "%s%d_CENT%d_%d", "sv4Diff", m, k * 10, (k + 1) * 10);
+            DiffSV4[k][m] = (TH1F *)f->Get(str);
+            sprintf(str, "%s%d_CENT%d_%d", "DiffMC", m, k * 10, (k + 1) * 10);
+            DiffMC[k][m] = (TH1F *)f->Get(str);
+            sprintf(str, "%s%d_CENT%d_%d", "SV2_DiffSV2", m, k * 10, (k + 1) * 10);
+            SV2_DiffSV2[k][m] = (TH1F *)f->Get(str);
+            sprintf(str, "%s%d_CENT%d_%d", "SV2_DiffSV4", m, k * 10, (k + 1) * 10);
+            SV2_DiffSV4[k][m] = (TH1F *)f->Get(str);
+            sprintf(str, "%s%d_CENT%d_%d", "SV4_DiffSV2", m, k * 10, (k + 1) * 10);
+            SV4_DiffSV2[k][m] = (TH1F *)f->Get(str);
+            sprintf(str, "%s%d_CENT%d_%d", "SV4_DiffSV4", m, k * 10, (k + 1) * 10);
+            SV4_DiffSV4[k][m] = (TH1F *)f->Get(str);
+            sprintf(str, "%s%d_CENT%d_%d", "DiffSV2_DiffSV4", m, k * 10, (k + 1) * 10);
+            DiffSV2_DiffSV4[k][m] = (TH1F *)f->Get(str);
             sprintf(hBinPt, "%s%d_CENT%d_%d", "BIN_pt_", m, k * 10, (k + 1) * 10);
-            sprintf(strvObs, "%s%d_CENT%d_%d", "diffVobs", m, k * 10, (k + 1) * 10);
-            sprintf(strRES, "%s%d_CENT%d_%d", "diffRES", m, k * 10, (k + 1) * 10);
-
-            const char *rvObs = (char *)strvObs;
-            const char *rRES = (char *)strRES;
-            const char *EastH = (char *)strE;
-            const char *WastH = (char *)strW;
-            const char *SMC = (char *)strMC;
-            const char *stCOVsv2sv2 = (char *)strCOVsv2sv2;
-            const char *stCOVsv2sv4 = (char *)strCOVsv2sv4;
-            const char *stCOVsv4sv2 = (char *)strCOVsv4sv2;
-            const char *stCOVsv4sv4 = (char *)strCOVsv4sv4;
-            const char *DifCOVsv2sv4 = (char *)DiffCOVsv2sv4;
-            const char *HBinPt = (char *)hBinPt;
-            HDiffVobs[k][m] = (TH1F *)f->Get(rvObs);
-            HDiffRES[k][m] = (TH1F *)f->Get(rRES);
-            DiffSV2[k][m] = (TH1F *)f->Get(EastH);
-            DiffSV4[k][m] = (TH1F *)f->Get(WastH);
-            DiffMC[k][m] = (TH1F *)f->Get(SMC);
-            SV2_DiffSV2[k][m] = (TH1F *)f->Get(stCOVsv2sv2);
-            SV2_DiffSV4[k][m] = (TH1F *)f->Get(stCOVsv2sv4);
-            SV4_DiffSV2[k][m] = (TH1F *)f->Get(stCOVsv4sv2);
-            SV4_DiffSV4[k][m] = (TH1F *)f->Get(stCOVsv4sv4);
-            DiffSV2_DiffSV4[k][m] = (TH1F *)f->Get(DifCOVsv2sv4);
+            sprintf(str, "%s%d_CENT%d_%d", "diffVobs", m, k * 10, (k + 1) * 10);
+            HDiffVobs[k][m] = (TH1F *)f->Get(str);
+            sprintf(str, "%s%d_CENT%d_%d", "diffRES", m, k * 10, (k + 1) * 10);
+            HDiffRES[k][m] = (TH1F *)f->Get(str);
             //hBin_Pt[k][m] = 0.5 * (pt_bin[m] + pt_bin[m + 1]); //hBin_Pt[k][m]=(TH1F*)f->Get(HBinPt);
             RMSbinPt[k][m] = 0;
         }
@@ -252,12 +206,26 @@ void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40
     }
 
     cout << "Ok " << endl;
+
+    TFile *d_outfile = new TFile(savefile, "recreate");
+    d_outfile->cd();
+
+
+
+
+
+
+
+
+
+    char name[400];
     for (int kk = 0; kk < Nb; kk++)
     {
         //Дифференциальный поток с погрешностями
 
         grv4[kk] = new TGraphErrors(NN, binPt[kk], Diffv4[kk], RMSbinPt[kk], RMSv4[kk]);
-        grv4[kk]->SetName("diff_v4");
+        sprintf(name, "gr_cent%i_2", kk);
+        grv4[kk]->SetName(name);
         grv4[kk]->GetYaxis()->SetRangeUser(-0.01, 0.26);
         grv4[kk]->GetXaxis()->SetRangeUser(0.1, 3.6);
         grv4[kk]->SetMarkerStyle(21);
@@ -267,10 +235,11 @@ void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40
         grv4[kk]->SetLineWidth(1);
         grv4[kk]->GetXaxis()->SetTitle("Pt,Gev/c");
         grv4[kk]->GetYaxis()->SetTitle("V_{2}");
-        grv4[kk]->SetTitle("");
+        grv4[kk]->Write();
 
         grv2[kk] = new TGraphErrors(NN, binPt[kk], Diffv2[kk], RMSbinPt[kk], RMSv2[kk]);
-        grv2[kk]->SetName("diff_v2");
+        sprintf(name, "gr_cent%i_1", kk);
+        grv2[kk]->SetName(name);
         grv2[kk]->SetMarkerStyle(20);
         grv2[kk]->SetMarkerSize(1);
         grv2[kk]->SetMarkerColorAlpha(kBlue, 1);
@@ -278,22 +247,27 @@ void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40
         grv2[kk]->GetYaxis()->SetTitle("V_{2}");
         grv2[kk]->GetXaxis()->SetTitle("Pt,Gev/c");
         grv2[kk]->SetLineWidth(2);
+        grv2[kk]->Write();
 
         grvMc[kk] = new TGraphErrors(NN, binPt[kk], mc[kk], RMSbinPt[kk], RMSmc[kk]);
-        grvMc[kk]->SetName("diff_vMC");
+        sprintf(name, "gr_cent%i_0", kk);
+        grvMc[kk]->SetName(name);
         grvMc[kk]->SetMarkerStyle(22);
         grvMc[kk]->SetMarkerSize(1);
         grvMc[kk]->SetMarkerColorAlpha(kGreen, 1);
         grvMc[kk]->SetLineColorAlpha(kGreen, 1);
         grvMc[kk]->SetLineWidth(2);
+        grvMc[kk]->Write();
 
         grvEp[kk] = new TGraphErrors(NN, binPt[kk], DiffvEP[kk], RMSbinPt[kk], RMSvep[kk]);
-        grvEp[kk]->SetName("diff_vEVENTplane");
+        sprintf(name, "gr_cent%i_3", kk);
+        grvEp[kk]->SetName(name);
         grvEp[kk]->SetMarkerStyle(22);
         grvEp[kk]->SetMarkerSize(1);
         grvEp[kk]->SetMarkerColorAlpha(kRed, 1);
         grvEp[kk]->SetLineColorAlpha(kRed, 1);
         grvEp[kk]->SetLineWidth(2);
+        grvEp[kk]->Write();
 
         //Рефренсный поток с погрешностями
         IntMc[kk] = vMC[kk];
@@ -328,6 +302,7 @@ void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40
         grIntvEp[kk]->SetMarkerStyle(20);
         grIntvEp[kk]->GetYaxis()->SetTitle("V_{2}");
     }
+    d_outfile->Close();
 
     Int_t cent = 5;
 
@@ -394,7 +369,7 @@ void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40
     leg2->AddEntry(grIntv2[cent], "V_{2}{2}", "pe");
     leg2->AddEntry(grIntvMc[cent], "V_{2}{MC}", "pe");
     leg2->AddEntry(grIntvEp[cent], "V_{2}{EP}", "pe");
-    leg2-> SetTextSize(0.04);
+    leg2->SetTextSize(0.04);
     char strleg[200];
     sprintf(strleg, " cent: %i-%i%%", cent * 10, (cent + 1) * 10);
     leg2->SetHeader(strleg);
@@ -470,15 +445,6 @@ void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40
     dleg->SetHeader(strlegd);
     dleg->Draw();
 
-    TFile *d_outfile = new TFile(savefile, "recreate");
-    d_outfile->cd();
-    grvMc[cent]->Write("grMC");
-    grvEp[cent]->Write("grEP");
-    grv2[cent]->Write("grV2");
-    grv4[cent]->Write("grV4");
-    d_outfile->Close();
-
-
-//Ratio дифференциального потока для центральностей cent*10-(cent+1)*10
-DrawTGraph(grvEp[cent], grvMc[cent]);
+    //Ratio дифференциального потока для центральностей cent*10-(cent+1)*10
+    //DrawTGraph(grvEp[cent], grvMc[cent]);
 }
