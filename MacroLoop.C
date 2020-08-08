@@ -8,7 +8,7 @@ t.Book();//Centering("");
 //Flatting("~/FLOW5/OUT/OUTcent.root");
 t.Loop();t.SaveData(outfile);
 }
-void MacroLoop(){start();
+void MacroLoop(){//start();
 //read("/home/dim2/FLOW5/Macro/claster/10MsumALLnonflow.root");
 //read("/home/dim2/FLOW5/Macro/claster/10MsumALLwiegt.root");
 read("/home/dim2/FLOW5/OUT/OUT.root");

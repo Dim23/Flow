@@ -4,11 +4,11 @@
 #include <TGraphErrors.h>
 #include <TGraph.h>
 #include <TLegend.h>
+#include "/home/dim2/GIT/DrawTGraph.C"
 
 TGraphErrors *grv4[Nb], *grv2[Nb], *grvMc[Nb], *grvEp[Nb];
 TGraphErrors *grIntv4[Nb], *grIntv2[Nb], *grIntvMc[Nb], *grIntvEp[Nb];
 double RMSSV2[Nb], RMSSV4[Nb], RMSVMC[Nb], RMSVEP[Nb], binCent[Nb], IntMc[Nb], IntV2[Nb], IntV4[Nb], IntEv[Nb], ErMc[Nb], ErV2[Nb], ErV4[Nb], ErEv[Nb], RMSbinCent[Nb]; //RMS для SV2 и SV4
-
 
 double sigmaX(TH1F *X, double weight)
 {
@@ -29,88 +29,89 @@ double sigmaXY(TH1F *X, TH1F *Y, TH1F *XY, double weight)
 
 void read(const char *infile, const char *savefile = "~/FLOW5/PLOT/NoneFlow30_40.root")
 {
-double b_bin[9] = {0.0, 4.18, 6.01, 7.37, 8.52, 9.57, 10.55, 11.46, 12.31};
-static const int Nb = 8;
-double pt_bin[13] = {0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.2, 2.6, 3.0, 3.5};
-static const int NN = 12;
+    // Setting up global variables for the plot
+    gROOT->SetStyle("Pub");
+    gROOT->ForceStyle();
 
-double RMSdn2[Nb][NN];
-double RMSv2[Nb][NN];
-double RMSdn4[Nb][NN];
-double RMSv4[Nb][NN];
-double Rv2[Nb][NN];
-double Rv4[Nb][NN];
-double mc[Nb][NN];
-double RMSmc[Nb][NN];
-double RMSvep[Nb][NN];
-double RMSbinPt[Nb][NN];
+    double b_bin[9] = {0.0, 4.18, 6.01, 7.37, 8.52, 9.57, 10.55, 11.46, 12.31};
+    static const int Nb = 8;
+    double pt_bin[13] = {0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.2, 2.6, 3.0, 3.5};
+    static const int NN = 12;
 
+    double RMSdn2[Nb][NN];
+    double RMSv2[Nb][NN];
+    double RMSdn4[Nb][NN];
+    double RMSv4[Nb][NN];
+    double Rv2[Nb][NN];
+    double Rv4[Nb][NN];
+    double mc[Nb][NN];
+    double RMSmc[Nb][NN];
+    double RMSvep[Nb][NN];
+    double RMSbinPt[Nb][NN];
 
+    double dsv4[Nb][NN], dsv2[Nb][NN], sv4[Nb], sv2[Nb], v4[Nb], v2[Nb], vMC[Nb], vEP[Nb], cn2[Nb], cn4[Nb];
 
+    TH1F *SV2[Nb]; //2 частичная референсная корреляция
+    TH1F *SV4[Nb]; //4 частичная референсная корреляция
+    TH1F *COSf1[Nb];
+    TH1F *SINf1[Nb];
+    TH1F *COSf1f2[Nb];
+    TH1F *SINf1f2[Nb];
+    TH1F *COSf1f2f3[Nb];
+    TH1F *SINf1f2f3[Nb];
 
-double dsv4[Nb][NN], dsv2[Nb][NN], sv4[Nb], sv2[Nb], v4[Nb], v2[Nb], vMC[Nb], vEP[Nb], cn2[Nb], cn4[Nb];
+    TH1F *SV2_SV4[Nb];
+    TH1F *HMC[Nb], *HRES[Nb], *HVobs[Nb], *HDiffRES[Nb][NN], *HDiffVobs[Nb][NN];
+    TH1F *DiffSV2[Nb][NN];
+    TH1F *DiffSV4[Nb][NN];
+    TH1F *DiffMC[Nb][NN];
+    TH1F *SV2_DiffSV2[Nb][NN];
+    TH1F *SV2_DiffSV4[Nb][NN];
+    TH1F *SV4_DiffSV2[Nb][NN];
+    TH1F *SV4_DiffSV4[Nb][NN];
+    TH1F *DiffSV2_DiffSV4[Nb][NN];
+    TH1F *hBin_Pt[Nb][NN];
+    TH1F *COSp1[Nb][NN];
+    TH1F *SINp1[Nb][NN];
+    TH1F *COSp1f2[Nb][NN];
+    TH1F *SINp1f2[Nb][NN];
+    TH1F *COSp1f2mf3[Nb][NN];
+    TH1F *SINp1f2mf3[Nb][NN];
+    TH1F *COSp1mf2mf3[Nb][NN];
+    TH1F *SINp1mf2mf3[Nb][NN];
 
-TH1F *SV2[Nb]; //2 частичная референсная корреляция
-TH1F *SV4[Nb]; //4 частичная референсная корреляция
-TH1F *COSf1[Nb];
-TH1F *SINf1[Nb];
-TH1F *COSf1f2[Nb];
-TH1F *SINf1f2[Nb];
-TH1F *COSf1f2f3[Nb];
-TH1F *SINf1f2f3[Nb];
+    double binPt[Nb][NN];
+    double QMC[Nb][NN];
+    double dn2[Nb][NN];
+    double dn4[Nb][NN];
+    double Diffv2[Nb][NN];
+    double Diffv4[Nb][NN];
+    double DiffvEP[Nb][NN];
+    double Diffsv2[Nb][NN];
+    double Diffsv4[Nb][NN];
 
-TH1F *SV2_SV4[Nb];
-TH1F *HMC[Nb], *HRES[Nb], *HVobs[Nb], *HDiffRES[Nb][NN], *HDiffVobs[Nb][NN];
-TH1F *DiffSV2[Nb][NN];
-TH1F *DiffSV4[Nb][NN];
-TH1F *DiffMC[Nb][NN];
-TH1F *SV2_DiffSV2[Nb][NN];
-TH1F *SV2_DiffSV4[Nb][NN];
-TH1F *SV4_DiffSV2[Nb][NN];
-TH1F *SV4_DiffSV4[Nb][NN];
-TH1F *DiffSV2_DiffSV4[Nb][NN];
-TH1F *hBin_Pt[Nb][NN];
-TH1F *COSp1[Nb][NN];
-TH1F *SINp1[Nb][NN];
-TH1F *COSp1f2[Nb][NN];
-TH1F *SINp1f2[Nb][NN];
-TH1F *COSp1f2mf3[Nb][NN];
-TH1F *SINp1f2mf3[Nb][NN];
-TH1F *COSp1mf2mf3[Nb][NN];
-TH1F *SINp1mf2mf3[Nb][NN];
+    char strvObs[200];
+    char strRES[200];
+    char strCOVsv2sv2[200];
+    char strCOVsv2sv4[200];
+    char strCOVsv4sv2[200];
+    char strCOVsv4sv4[200];
+    char DiffCOVsv2sv4[200];
+    char strE[200];
+    char strW[200];
+    char strMC[200];
 
-double binPt[Nb][NN];
-double QMC[Nb][NN];
-double dn2[Nb][NN];
-double dn4[Nb][NN];
-double Diffv2[Nb][NN];
-double Diffv4[Nb][NN];
-double DiffvEP[Nb][NN];
-double Diffsv2[Nb][NN];
-double Diffsv4[Nb][NN];
-
-char strvObs[200];
-char strRES[200];
-char strCOVsv2sv2[200];
-char strCOVsv2sv4[200];
-char strCOVsv4sv2[200];
-char strCOVsv4sv4[200];
-char DiffCOVsv2sv4[200];
-char strE[200];
-char strW[200];
-char strMC[200];
-
-char strCOSp1[200];
-char strSINp1[200];
-char strCOSp1f2[200];
-char strSINp1f2[200];
-char strCOSp1f2mf3[200];
-char strSINp1f2mf3[200];
-char strCOSp1mf2mf3[200];
-char strSINp1mf2mf3[200];
-char hBinPt[200];
-char str[200];
-const char *STR;
+    char strCOSp1[200];
+    char strSINp1[200];
+    char strCOSp1f2[200];
+    char strSINp1f2[200];
+    char strCOSp1f2mf3[200];
+    char strSINp1f2mf3[200];
+    char strCOSp1mf2mf3[200];
+    char strSINp1mf2mf3[200];
+    char hBinPt[200];
+    char str[200];
+    const char *STR;
     TFile *f = new TFile(infile);
     for (int k = 0; k < Nb; k++)
     {
@@ -219,8 +220,8 @@ const char *STR;
         {
             mc[k][m] = DiffMC[k][m]->GetMean();
             RMSmc[k][m] = pow(sigmaX(DiffMC[k][m], 1), 0.5);
-            RMSvep[k][m] = sigmaX(HDiffVobs[k][m], 1)/ HDiffRES[k][m]->GetMean()+0.25*HDiffVobs[k][m]->GetMean()*HDiffVobs[k][m]->GetMean()*sigmaX(HDiffRES[k][m], 1)/pow(HDiffRES[k][m]->GetMean(),3) ;
-            RMSvep[k][m]=pow(RMSvep[k][m],0.5);
+            RMSvep[k][m] = sigmaX(HDiffVobs[k][m], 1) / HDiffRES[k][m]->GetMean() + 0.25 * HDiffVobs[k][m]->GetMean() * HDiffVobs[k][m]->GetMean() * sigmaX(HDiffRES[k][m], 1) / pow(HDiffRES[k][m]->GetMean(), 3);
+            RMSvep[k][m] = pow(RMSvep[k][m], 0.5);
             RMSdn2[k][m] = sigmaX(DiffSV2[k][m], 1);
             RMSdn4[k][m] = DiffSV4[k][m]->GetStdDev();
 
@@ -229,7 +230,7 @@ const char *STR;
 
             Rv4[k][m] = (pow(fabs(cn4[k]), -3.5)) * (pow((2 * sv2[k] * sv2[k] * dn2[k][m] - 3 * sv2[k] * dsv4[k][m] + 2 * sv4[k] * dn2[k][m]), 2) * sigmaX(SV2[k], 1) +
                                                      9 / 16 * pow(dn4[k][m], 2) * sigmaX(SV4[k], 1) + 4 * sv2[k] * sv2[k] * pow(fabs(cn4[k]), 2) * sigmaX(DiffSV2[k][m], 1) +
-                                                     
+
                                                      pow(fabs(cn4[k]), 2) * sigmaX(DiffSV4[k][m], 1) -
 
                                                      1.5 * fabs(dn4[k][m]) * (2 * sv2[k] * sv2[k] * dn2[k][m] - 3 * sv2[k] * dsv4[k][m] + 2 * sv4[k] * dn2[k][m]) * sigmaXY(SV2[k], SV4[k], SV2_SV4[k], 1) -
@@ -250,183 +251,122 @@ const char *STR;
         }
     }
 
-    /*TFile *d_outfile = new TFile(savefile, "recreate");
-    d_outfile->cd();
-
-    grv4->Write("grV4");
-    grv2->Write("grV2");
-    grv->Write("grMc");
-    grvE->Write("grEP");
-    grMC->Write("grIntMC");
-    grEP->Write("grIntEP");
-    grsv4->Write("grIntV2");
-    grsv2->Write("grIntV4");
-    d_outfile->Close();*/
-
-
-cout << "Ok "<<endl;
+    cout << "Ok " << endl;
     for (int kk = 0; kk < Nb; kk++)
     {
+        //Дифференциальный поток с погрешностями
+
+        grv4[kk] = new TGraphErrors(NN, binPt[kk], Diffv4[kk], RMSbinPt[kk], RMSv4[kk]);
+        grv4[kk]->SetName("diff_v4");
+        grv4[kk]->GetYaxis()->SetRangeUser(-0.01, 0.26);
+        grv4[kk]->GetXaxis()->SetRangeUser(0.1, 3.6);
+        grv4[kk]->SetMarkerStyle(21);
+        grv4[kk]->SetMarkerSize(1);
+        grv4[kk]->SetMarkerColorAlpha(kBlack, 1);
+        grv4[kk]->SetLineColorAlpha(kBlack, 1);
+        grv4[kk]->SetLineWidth(1);
+        grv4[kk]->GetXaxis()->SetTitle("Pt,Gev/c");
+        grv4[kk]->GetYaxis()->SetTitle("V_{2}");
+        grv4[kk]->SetTitle("");
+
+        grv2[kk] = new TGraphErrors(NN, binPt[kk], Diffv2[kk], RMSbinPt[kk], RMSv2[kk]);
+        grv2[kk]->SetName("diff_v2");
+        grv2[kk]->SetMarkerStyle(20);
+        grv2[kk]->SetMarkerSize(1);
+        grv2[kk]->SetMarkerColorAlpha(kBlue, 1);
+        grv2[kk]->SetLineColorAlpha(kBlue, 1);
+        grv2[kk]->GetYaxis()->SetTitle("V_{2}");
+        grv2[kk]->GetXaxis()->SetTitle("Pt,Gev/c");
+        grv2[kk]->SetLineWidth(2);
+
+        grvMc[kk] = new TGraphErrors(NN, binPt[kk], mc[kk], RMSbinPt[kk], RMSmc[kk]);
+        grvMc[kk]->SetName("diff_vMC");
+        grvMc[kk]->SetMarkerStyle(22);
+        grvMc[kk]->SetMarkerSize(1);
+        grvMc[kk]->SetMarkerColorAlpha(kGreen, 1);
+        grvMc[kk]->SetLineColorAlpha(kGreen, 1);
+        grvMc[kk]->SetLineWidth(2);
+
+        grvEp[kk] = new TGraphErrors(NN, binPt[kk], DiffvEP[kk], RMSbinPt[kk], RMSvep[kk]);
+        grvEp[kk]->SetName("diff_vEVENTplane");
+        grvEp[kk]->SetMarkerStyle(22);
+        grvEp[kk]->SetMarkerSize(1);
+        grvEp[kk]->SetMarkerColorAlpha(kRed, 1);
+        grvEp[kk]->SetLineColorAlpha(kRed, 1);
+        grvEp[kk]->SetLineWidth(2);
+
         //Рефренсный поток с погрешностями
-        IntMc[kk] = vMC[kk]; ErMc[kk] = pow(sigmaX(HMC[kk], 1), 0.5);
-        IntV2[kk] = v2[kk];ErV2[kk] = pow(sigmaX(SV2[kk], 1), 0.5)/(2*pow(sv2[kk],0.5));
+        IntMc[kk] = vMC[kk];
+        ErMc[kk] = pow(sigmaX(HMC[kk], 1), 0.5);
+        IntV2[kk] = v2[kk];
+        ErV2[kk] = pow(sigmaX(SV2[kk], 1), 0.5) / (2 * pow(sv2[kk], 0.5));
         IntV4[kk] = v4[kk];
         double Is4 = pow(fabs(cn4[kk]), -1.5) * (sigmaX(SV2[kk], sv2[kk] * sv2[kk]) + sigmaX(SV4[kk], 0.125) - 0.5 * sv2[kk] * sigmaXY(SV2[kk], SV4[kk], SV2_SV4[kk], 1));
         ErV4[kk] = pow(Is4, 0.5);
-        IntEv[kk] = vEP[kk]; 
-ErEv[kk] = pow(sigmaX(HVobs[kk],1)/HRES[kk]->GetMean()+0.25*HVobs[kk]->GetMean()*HVobs[kk]->GetMean()*sigmaX(HRES[kk], 1)/pow(HRES[kk]->GetMean(),3), 0.5)      ;
+        IntEv[kk] = vEP[kk];
+        ErEv[kk] = pow(sigmaX(HVobs[kk], 1) / HRES[kk]->GetMean() + 0.25 * HVobs[kk]->GetMean() * HVobs[kk]->GetMean() * sigmaX(HRES[kk], 1) / pow(HRES[kk]->GetMean(), 3), 0.5);
 
-        grv4[kk] = new TGraphErrors(NN, binPt[kk], Diffv4[kk], RMSbinPt[kk], RMSv4[kk]);
-    grv4[kk]->SetName("diff_v4");
-    grv4[kk]->GetYaxis()->SetRangeUser(0, 0.25);
-    grv4[kk]->SetMarkerStyle(21);
-    grv4[kk]->SetMarkerSize(1);
-    grv4[kk]->SetMarkerColorAlpha(kBlack, 1);
-    grv4[kk]->SetLineColorAlpha(kBlack, 1);
-    grv4[kk]->SetLineWidth(1);
-    grv4[kk]->GetXaxis()->SetTitle("Pt,Gev/c");
-    grv4[kk]->GetYaxis()->SetTitle("V_{2}");
-    //grv4[kk]->Draw("AP");
-    grv4[kk]->SetTitle("");
+        double x[1] = {0.5}, y[1] = {vMC[kk]}, ex[1] = {0.}, ey[1] = {ErMc[kk]};
+        grIntvMc[kk] = new TGraphErrors(1, x, y, ex, ey);
+        grIntvMc[kk]->SetName("vMC");
+        grIntvMc[kk]->SetMarkerStyle(20);
+        grIntvMc[kk]->GetYaxis()->SetTitle("V_{2}");
 
-    grv2[kk] = new TGraphErrors(NN, binPt[kk], Diffv2[kk], RMSbinPt[kk], RMSv2[kk]);
-    grv2[kk]->SetName("diff_v2");
-    grv2[kk]->SetMarkerStyle(20);
-    grv2[kk]->SetMarkerSize(1);
-    grv2[kk]->SetMarkerColorAlpha(kBlue, 1);
-    grv2[kk]->SetLineColorAlpha(kBlue, 1);
-    grv2[kk]->GetYaxis()->SetTitle("V_{2}");
-    grv2[kk]->GetXaxis()->SetTitle("Pt,Gev/c");
-    grv2[kk]->SetLineWidth(2);
-    //grv2[kk]->Draw("SAME P");
-    
+        double x2[1] = {1.5}, y2[1] = {v2[kk]}, ex2[1] = {0.}, ey2[1] = {ErV2[kk]};
+        grIntv2[kk] = new TGraphErrors(1, x2, y2, ex2, ey2);
+        grIntv2[kk]->SetName("v2");
+        grIntv2[kk]->SetMarkerStyle(20);
 
-    grvMc[kk] = new TGraphErrors(NN, binPt[kk], mc[kk], RMSbinPt[kk], RMSmc[kk]);
-    grvMc[kk]->SetName("diff_vMC");
-    grvMc[kk]->SetMarkerStyle(22);
-    grvMc[kk]->SetMarkerSize(1);
-    grvMc[kk]->SetMarkerColorAlpha(kGreen, 1);
-    grvMc[kk]->SetLineColorAlpha(kGreen, 1);
-    grvMc[kk]->SetLineWidth(2);
-    //grvMc[kk]->Draw("SAME P");
-    
+        double x4[1] = {2.5}, y4[1] = {v4[kk]}, ex4[1] = {0.}, ey4[1] = {ErV4[kk]};
+        grIntv4[kk] = new TGraphErrors(1, x4, y4, ex4, ey4);
+        grIntv4[kk]->SetName("v4");
+        grIntv4[kk]->SetMarkerStyle(20);
 
-    grvEp[kk] = new TGraphErrors(NN, binPt[kk], DiffvEP[kk], RMSbinPt[kk], RMSvep[kk]);
-    grvEp[kk]->SetName("diff_vEVENTplane");
-    grvEp[kk]->SetMarkerStyle(22);
-    grvEp[kk]->SetMarkerSize(1);
-    grvEp[kk]->SetMarkerColorAlpha(kRed, 1);
-    grvEp[kk]->SetLineColorAlpha(kRed, 1);
-    grvEp[kk]->SetLineWidth(2);
-    //grvEp[kk]->Draw("SAME P");
-    
-
-    //Рефренсный поток с погрешностями
-    double x[1] = {0.5}, y[1] = {vMC[kk]}, ex[1] = {0.}, ey[1] = {ErMc[kk]};
-    grIntvMc[kk] = new TGraphErrors(1, x, y, ex, ey);
-    grIntvMc[kk]->SetName("vMC");
-    grIntvMc[kk]->SetMarkerStyle(20);
-    grIntvMc[kk]->GetYaxis()->SetTitle("V_{2}");
-
-    double x2[1] = {1.5}, y2[1] = {v2[kk]}, ex2[1] = {0.}, ey2[1] = {ErV2[kk]};
-    grIntv2[kk] = new TGraphErrors(1, x2, y2, ex2, ey2);
-    grIntv2[kk]->SetName("v2");
-    grIntv2[kk]->SetMarkerStyle(20);
-
-    double x4[1] = {2.5}, y4[1] = {v4[kk]}, ex4[1] = {0.}, ey4[1] = {ErV4[kk]};
-    
-    grIntv4[kk] = new TGraphErrors(1, x4, y4, ex4, ey4);
-    grIntv4[kk]->SetName("v4");
-    grIntv4[kk]->SetMarkerStyle(20);
-    //cout << "MC eror " << ey[0] << " SV2 eror " << ey2[0] << " SV4 eror " << ey4[0] << endl;
-
-    double x5[1] = {3.5}, y5[1] = {vEP[kk]}, ex5[1] = {0.}, ey5[1] = {ErEv[kk]};
-    grIntvEp[kk] = new TGraphErrors(1, x5, y5, ex5, ey5);
-    grIntvEp[kk]->SetName("vEP");
-    grIntvEp[kk]->SetMarkerStyle(20);
-    grIntvEp[kk]->GetYaxis()->SetTitle("V_{2}");
+        double x5[1] = {3.5}, y5[1] = {vEP[kk]}, ex5[1] = {0.}, ey5[1] = {ErEv[kk]};
+        grIntvEp[kk] = new TGraphErrors(1, x5, y5, ex5, ey5);
+        grIntvEp[kk]->SetName("vEP");
+        grIntvEp[kk]->SetMarkerStyle(20);
+        grIntvEp[kk]->GetYaxis()->SetTitle("V_{2}");
     }
 
+    Int_t cent = 5;
 
-    /*gPad->BuildLegend();
-    gROOT->SetStyle("Pub");
-    gStyle->SetOptStat(1111);*/
+    TCanvas *cdif = new TCanvas("cdif", "def Flow All", 200, 10, 1600, 900);
+    cdif->Divide(3, 2, 0, 0);
 
-static const int cent=3;
-TCanvas *c1 = new TCanvas("c1", "demo bin labels1", 10, 10, 600, 400);
-  c1->SetLeftMargin(0.12);c1->SetRightMargin(0.12);
-    c1->SetBottomMargin(0.1);
-    c1->SetTopMargin(0.03);
-double ymin0 = 0;//min(Diffv4[cent][NN-1] - RMSv4[cent][NN-1],0.);
-    double ymax0 =0.25;// max(Diffv4[cent][NN-1] + RMSv4[cent][NN-1], Diffv4[cent][NN-2] + RMSv4[cent][NN-1]);
-    grv4[cent]->GetYaxis()->SetRangeUser(0.99 * ymin0, 1.05 * ymax0);
+    TLegend *legdif[Nb];
+    for (int k = 0; k < 6; k++)
+    {
+        cdif->cd(k + 1);
 
-grv4[cent]->Draw("AP");
-grv2[cent]->Draw("SAME P");
-grvMc[cent]->Draw("SAME P");
-grvEp[cent]->Draw("SAME P");
+        if (k % 3 == 0)
+        {
+            legdif[k] = new TLegend(0.16, 0.72, 0.35, 0.995);
+        }
+        else
+        {
+            legdif[k] = new TLegend(0., 0.72, 0.24, 0.995);
+        }
+        legdif[k]->AddEntry(grv4[k], "V_{2}{4}", "pe");
+        legdif[k]->AddEntry(grv2[k], "V_{2}{2}", "pe");
+        legdif[k]->AddEntry(grvMc[k], "V_{2}{MCk}", "pe");
+        legdif[k]->AddEntry(grvEp[k], "V_{2}{EP}", "pe");
+        char strleg[200];
+        sprintf(strleg, " cent: %i-%i%%", k * 10, (k + 1) * 10);
 
-TLegend *leg1 = new TLegend(0.19,0.75,0.32,0.95);
-   leg1->AddEntry(grv4[cent],"V_{2}{4}","pe");
-   leg1->AddEntry(grv2[cent],"V_{2}{2}","pe");
-   leg1->AddEntry(grvMc[cent],"V_{2}{MC}","pe");
-   leg1->AddEntry(grvEp[cent],"V_{2}{EP}","pe");
-sprintf(str, "cent: %i-%i%",cent * 10, (cent + 1) * 10);
-        STR = (char *)str;
-leg1->SetHeader(STR);
-   // leg3 -> SetTextFont(62);
-    leg1 -> SetTextSize(0.03);
-    leg1 -> SetTextAlign(22);
-  leg1 -> SetBorderSize(1);
-leg1 ->Draw();
+        legdif[k]->SetHeader(strleg);
+        grv4[k]->Draw("AP");
+        grv2[k]->Draw("SAME P");
+        grvMc[k]->Draw("SAME P");
+        grvEp[k]->Draw("SAME P");
+        legdif[k]->Draw();
+    }
 
-TFile *d_outfile = new TFile(savefile, "recreate");
-    d_outfile->cd();
-
-
-    grvEp[cent]->Write("grMC");
-    grvEp[cent]->Write("grEP");
-    grv2[cent]->Write("grV2");
-    grv4[cent]->Write("grV4");
-    d_outfile->Close();
-
-
-
-
-TLegend *legdif[Nb];
-
-TCanvas *cdif = new TCanvas("cdif", "def Flow Flow", 10, 10, 600, 400);
-    cdif->SetLeftMargin(0.11);cdif->SetRightMargin(0.11);
-    cdif->SetBottomMargin(0.1);
-    cdif->SetTopMargin(0.03);
-cdif->Divide(3,2,0.001,0.001);char text1[800];
-
-for(int k=0;k<6;k++){cdif->cd(k+1);
-
-
-
-legdif[k]= new TLegend(0.1,0.65,0.32,0.9);
-   legdif[k]->AddEntry(grv4[cent],"V_{2}{4}","pe");
-   legdif[k]->AddEntry(grv2[cent],"V_{2}{2}","pe");
-   legdif[k]->AddEntry(grvMc[cent],"V_{2}{MC}","pe");
-   legdif[k]->AddEntry(grvEp[cent],"V_{2}{EP}","pe");
-
-    
-sprintf(str, "cent: %d-%d%",k * 10, (k + 1) * 10);
-        STR = (char *)str;
-
-legdif[k]->SetHeader(STR);
-grv4[k]->Draw("AP");
-grv2[k]->Draw("SAME P");
-grvMc[k]->Draw("SAME P");
-grvEp[k]->Draw("SAME P");legdif[k]-> Draw();}
-
-
-
-TCanvas *c2 = new TCanvas("c2", "demo bin labels", 10, 10, 600, 400);
-    c2->SetLeftMargin(0.11);c2->SetRightMargin(0.11);
+    TCanvas *c2 = new TCanvas("c2", "Ref Flow Cent", 0, 0, 600, 400);
+    c2->SetLeftMargin(0.1);
+    c2->SetRightMargin(0.1);
     c2->SetBottomMargin(0.1);
-    c2->SetTopMargin(0.03);
+    c2->SetTopMargin(0.1);
     TH1F *h = new TH1F("h", "", 4, 0., 4.);
     const Int_t nx = 4;
     const char *month[nx] = {"V_{2}{MC}", "V_{2}{2}", "V_{2}{4}", "V_{2}{EP}"};
@@ -438,7 +378,7 @@ TCanvas *c2 = new TCanvas("c2", "demo bin labels", 10, 10, 600, 400);
         h->Fill(month[i], 1);
     }
     h->LabelsDeflate("X");
-    double ey4[1] ={ErV4[cent]};
+    double ey4[1] = {ErV4[cent]};
     //ey4[0]= grIntv4[kk]->GetErrorY(0);
     double ymin = min(vMC[cent] - ey4[0], v4[cent] - ey4[0]);
     double ymax = max(v4[cent] + ey4[0], v2[cent] + ey4[0]);
@@ -449,32 +389,25 @@ TCanvas *c2 = new TCanvas("c2", "demo bin labels", 10, 10, 600, 400);
     line->SetLineWidth(1);
     line->SetLineStyle(5);
 
-TLegend *leg2 = new TLegend(0.19,0.75,0.32,0.95);
-   leg2->AddEntry(grIntv4[cent],"V_{2}{4}","pe");
-   leg2->AddEntry(grIntv2[cent],"V_{2}{2}","pe");
-   leg2->AddEntry(grIntvMc[cent],"V_{2}{MC}","pe");
-   leg2->AddEntry(grIntvEp[cent],"V_{2}{EP}","pe");
-sprintf(str, "cent: %i-%i%",cent * 10, (cent + 1) * 10);
-        STR = (char *)str;
-leg2->SetHeader(STR);
-   // leg3 -> SetTextFont(62);
-    leg2 -> SetTextSize(0.03);
-    leg2 -> SetTextAlign(22);
-  leg2 -> SetBorderSize(1);
-
-    grIntvMc[cent]->Draw("SAME P");
-    grIntvEp[cent]->Draw("SAME P");
+    TLegend *leg2 = new TLegend(0.1, 0.6, 0.3, 0.9);
+    leg2->AddEntry(grIntv4[cent], "V_{2}{4}", "pe");
+    leg2->AddEntry(grIntv2[cent], "V_{2}{2}", "pe");
+    leg2->AddEntry(grIntvMc[cent], "V_{2}{MC}", "pe");
+    leg2->AddEntry(grIntvEp[cent], "V_{2}{EP}", "pe");
+    leg2-> SetTextSize(0.04);
+    char strleg[200];
+    sprintf(strleg, " cent: %i-%i%%", cent * 10, (cent + 1) * 10);
+    leg2->SetHeader(strleg);
     grIntv4[cent]->Draw("SAME P");
     grIntv2[cent]->Draw("SAME P");
+    grIntvMc[cent]->Draw("SAME P");
+    grIntvEp[cent]->Draw("SAME P");
     line->Draw("SAME");
-leg2 ->Draw();
-cout << "Q2Er "<<ErV2[cent]<<"Q4Er "<<ErV4[cent]<<"McEr "<<ErMc[cent]<<endl;
+    leg2->Draw();
+    cout << "Q2Er " << ErV2[cent] << "Q4Er " << ErV4[cent] << "McEr " << ErMc[cent] << endl;
 
-
-    TCanvas *c3 = new TCanvas("c3", "demo bin labels3", 10, 10, 600, 400);
-    c3->SetLeftMargin(0.1);c3->SetRightMargin(0.1);
-    c3->SetBottomMargin(0.1);
-    c3->SetTopMargin(0.03);
+    //Референсный поток по центральсности
+    TCanvas *c3 = new TCanvas("c3", "Ref Flow be Centrality", 10, 10, 600, 400);
     TGraphErrors *grIv4 = new TGraphErrors(Nb, binCent, IntV4, RMSbinCent, ErV4);
     grIv4->SetMarkerStyle(21);
     grIv4->SetMarkerSize(1);
@@ -483,26 +416,22 @@ cout << "Q2Er "<<ErV2[cent]<<"Q4Er "<<ErV4[cent]<<"McEr "<<ErMc[cent]<<endl;
     grIv4->SetLineWidth(2);
     grIv4->GetXaxis()->SetTitle("Cent, %");
     grIv4->GetYaxis()->SetTitle("V_{2}");
-    //grv4[kk]->Draw("AP");
-    grIv4->SetTitle("");
 
-TGraphErrors *grIv2 = new TGraphErrors(Nb, binCent, IntV2, RMSbinCent, ErV2);
+    TGraphErrors *grIv2 = new TGraphErrors(Nb, binCent, IntV2, RMSbinCent, ErV2);
     grIv2->SetMarkerStyle(20);
     grIv2->SetMarkerSize(1);
     grIv2->SetMarkerColorAlpha(kBlue, 1);
     grIv2->SetLineColorAlpha(kBlue, 1);
     grIv2->SetLineWidth(2);
-    //grIv2->SetTitle("V_{2}{2}");
 
-TGraphErrors *grIvMc = new TGraphErrors(Nb, binCent, IntMc, RMSbinCent, ErMc);
+    TGraphErrors *grIvMc = new TGraphErrors(Nb, binCent, IntMc, RMSbinCent, ErMc);
     grIvMc->GetYaxis()->SetRangeUser(0, 0.15);
-    grIvMc->SetMarkerStyle(21);
+    grIvMc->SetMarkerStyle(22);
     grIvMc->SetMarkerSize(1);
     grIvMc->SetMarkerColorAlpha(kGreen, 1);
     grIvMc->SetLineColorAlpha(kGreen, 1);
     grIvMc->SetLineWidth(1);
     grIvMc->GetYaxis()->SetTitle("V_{2}");
-    //grIvMc->SetTitle("V_{2}{MC}");
 
     TGraphErrors *grIvEp = new TGraphErrors(Nb, binCent, IntEv, RMSbinCent, ErEv);
     grIvEp->SetName("diff_vEVENTplane");
@@ -511,21 +440,45 @@ TGraphErrors *grIvMc = new TGraphErrors(Nb, binCent, IntMc, RMSbinCent, ErMc);
     grIvEp->SetMarkerColorAlpha(kRed, 1);
     grIvEp->SetLineColorAlpha(kRed, 1);
     grIvEp->SetLineWidth(1);
-    //grIvEp->SetTitle("V_{2}{Event Plane}");
 
-TLegend *leg3 = new TLegend(0.19,0.75,0.29,0.95);
-   leg3->AddEntry(grIv4,"V_{2}{4}","pe");
-   leg3->AddEntry(grIv2,"V_{2}{2}","pe");
-   leg3->AddEntry(grIvMc,"V_{2}{MC}","pe");
-   leg3->AddEntry(grIvEp,"V_{2}{EP}","pe");
-   // leg3 -> SetTextFont(62);
-    leg3 -> SetTextSize(0.03);
-    leg3 -> SetTextAlign(22);
-  leg3 -> SetBorderSize(1);
-grIv4->Draw("AP");
-grIv2->Draw("SAME P");
+    TLegend *leg3 = new TLegend(0.15, 0.65, 0.3, 0.9);
+    leg3->AddEntry(grIv4, "V_{2}{4}", "pe");
+    leg3->AddEntry(grIv2, "V_{2}{2}", "pe");
+    leg3->AddEntry(grIvMc, "V_{2}{MC}", "pe");
+    leg3->AddEntry(grIvEp, "V_{2}{EP}", "pe");
+    leg3->SetTextSize(0.04);
+    grIv4->Draw("AP");
+    grIv2->Draw("SAME P");
     grIvMc->Draw("SAME P");
     grIvEp->Draw("SAME P");
-leg3 -> Draw();
-}
+    leg3->Draw();
 
+    //Дифференциальный поток полученный всеми способоами на одном канвасе
+    TCanvas *c1 = new TCanvas("c1", "Def Flow for cent", 0, 0, 600, 400);
+    grv4[cent]->Draw("AP");
+    grv2[cent]->Draw("SAME P");
+    grvMc[cent]->Draw("SAME P");
+    grvEp[cent]->Draw("SAME P");
+    TLegend *dleg = new TLegend(0.15, 0.6, 0.32, 0.9);
+    dleg->AddEntry(grv4[cent], "V_{2}{4}", "pe");
+    dleg->AddEntry(grv2[cent], "V_{2}{2}", "pe");
+    dleg->AddEntry(grvMc[cent], "V_{2}{MC}", "pe");
+    dleg->AddEntry(grvEp[cent], "V_{2}{EP}", "pe");
+    dleg->SetTextSize(0.04);
+    char strlegd[200];
+    sprintf(strlegd, "cent: %i-%i%%", cent * 10, (cent + 1) * 10);
+    dleg->SetHeader(strlegd);
+    dleg->Draw();
+
+    TFile *d_outfile = new TFile(savefile, "recreate");
+    d_outfile->cd();
+    grvMc[cent]->Write("grMC");
+    grvEp[cent]->Write("grEP");
+    grv2[cent]->Write("grV2");
+    grv4[cent]->Write("grV4");
+    d_outfile->Close();
+
+
+//Ratio дифференциального потока для центральностей cent*10-(cent+1)*10
+DrawTGraph(grvEp[cent], grvMc[cent]);
+}
