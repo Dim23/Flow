@@ -11,6 +11,7 @@
 TFile *d_outfile;
 TRandom2 rnd;
 static const double Pi = 3.1415926535;
+static const int n = 2;
 double b_bin[9] = {0.0, 4.18, 6.01, 7.37, 8.52, 9.57, 10.55, 11.46, 12.31};
 static const int Nb = 8;
 double pt_min = 0., pt_max = 5, eta_min = -0.05, eta_max = 2.5;
@@ -29,11 +30,10 @@ double mp[Nb][NN], mq[Nb][NN];
 double DiffMQ2[Nb][NN], DiffMQ4[Nb][NN], DiffMQplus[Nb][NN], DiffMQminus[Nb][NN], QEvPl[Nb];
 double sv4[Nb], sv2[Nb], v4[Nb], v2[Nb], vMC[Nb], vEvPl[Nb], cn2[Nb], cn4[Nb];
 
-double PSIplus[Nb], PSIminus[Nb],PSI[Nb], Mplus[Nb], Mminus[Nb], Vobs[Nb];
+double PSIplus[Nb], PSIminus[Nb], PSI[Nb], Mplus[Nb], Mminus[Nb], Vobs[Nb];
 TComplex Qplus[Nb], Qminus[Nb];
 
 double dMplus[Nb][NN], dMminus[Nb][NN], dVobs[Nb][NN];
-
 
 TH1F *SV2[Nb]; //2 частичная референсная корреляция
 TH1F *SV4[Nb]; //4 частичная референсная корреляция
@@ -49,7 +49,7 @@ TH1F *hPt = new TH1F("hPt", "hPt", 1000, 0, 5);
 TH1F *hETA = new TH1F("hETA", "hETA", 1000, -10, 10);
 TH1F *hdPHI = new TH1F("hdPHI", "dPHI", 1000, -0.2, 6.5);
 
-TH1F *HMC[Nb], *HEvPl[Nb], *HQx[Nb],*HQy[Nb],*HQxKor[Nb],*HQyKor[Nb], *HPHI[Nb], *HRES[Nb], *HVobs[Nb], *HDiffRES[Nb][NN], *HDiffVobs[Nb][NN];
+TH1F *HMC[Nb], *HEvPl[Nb], *HQx[Nb], *HQy[Nb], *HQxKor[Nb], *HQyKor[Nb], *HPHI[Nb], *HRES[Nb], *HVobs[Nb], *HDiffRES[Nb][NN], *HDiffVobs[Nb][NN];
 TH1F *SV2_SV4[Nb];
 TH1F *DiffMC[Nb][NN], *DiffSV2[Nb][NN], *DiffSV4[Nb][NN];
 TH1F *SV2_DiffSV2[Nb][NN], *SV2_DiffSV4[Nb][NN];
@@ -69,7 +69,7 @@ double Diffv2[Nb][NN], Diffv4[Nb][NN], DiffEvPlv[Nb][NN];
 double Diffsv2[Nb][NN], Diffsv4[Nb][NN];
 double neff[Nb];
 double Sigma[Nb], Res[Nb];
-double QxMEAN[Nb],QxSIGMA[Nb],QyMEAN[Nb],QySIGMA[Nb];
+double QxMEAN[Nb], QxSIGMA[Nb], QyMEAN[Nb], QySIGMA[Nb];
 char strvObs[200];
 char strRES[200];
 
@@ -95,8 +95,8 @@ char str[200];
 const char *STR;
 
 static const int garm = 10;
-TH1F *HMeanCosP[Nb][garm],*HMeanSinP[Nb][garm];
-double MeanCosP[Nb][garm],MeanSinP[Nb][garm];
+TH1F *HMeanCosP[Nb][garm], *HMeanSinP[Nb][garm];
+double MeanCosP[Nb][garm], MeanSinP[Nb][garm];
 
 void MyClass::Book()
 {
@@ -168,24 +168,27 @@ void MyClass::Book()
         SV4[k]->StatOverflows(kTRUE);
         HPHI[k]->StatOverflows(kTRUE);
         HMC[k]->StatOverflows(kTRUE);
-        
+
         SV2[k]->Sumw2();
         SV4[k]->Sumw2();
         HMC[k]->Sumw2();
         HPHI[k]->Sumw2();
         HRES[k]->Sumw2();
 
-QxMEAN[k]=0;QxSIGMA[k]=1;QyMEAN[k]=0;QySIGMA[k]=1;
+        QxMEAN[k] = 0;
+        QxSIGMA[k] = 1;
+        QyMEAN[k] = 0;
+        QySIGMA[k] = 1;
 
-    for (int g = 0; g < garm; g++)
-    {
-        sprintf(str, "%s%dGARM%d_%d", "HMeanCosP", 2*g+2, k * 10, (k + 1) * 10);
-        STR = (char *)str;
-        HMeanCosP[k][g] = new TH1F(STR, "HMeanCosP", 10000, -100, 100);
-        sprintf(str, "%s%dGARM%d_%d", "HMeanSinP", 2*g+2, k * 10, (k + 1) * 10);
-        STR = (char *)str;
-        HMeanSinP[k][g] = new TH1F(STR, "HMeanSinP", 10000, -100, 100);
-    }
+        for (int g = 0; g < garm; g++)
+        {
+            sprintf(str, "%s%dGARM%d_%d", "HMeanCosP", 2 * g + 2, k * 10, (k + 1) * 10);
+            STR = (char *)str;
+            HMeanCosP[k][g] = new TH1F(STR, "HMeanCosP", 10000, -100, 100);
+            sprintf(str, "%s%dGARM%d_%d", "HMeanSinP", 2 * g + 2, k * 10, (k + 1) * 10);
+            STR = (char *)str;
+            HMeanSinP[k][g] = new TH1F(STR, "HMeanSinP", 10000, -100, 100);
+        }
 
         for (int m = 0; m < NN; m++)
         {
@@ -282,7 +285,6 @@ double Pt(double momx, double momy, double momz)
     return mom;
 }
 
-
 double RES(TH1F *X)
 {
     double meanQ = X->GetMean();
@@ -295,58 +297,51 @@ double RES(TH1F *X)
     return res;
 }
 
-
 void Centering(const char *infileC)
 {
-TFile *fC=new TFile(infileC);
-for(int k=0;k<Nb;k++)
+    TFile *fC = new TFile(infileC);
+    for (int k = 0; k < Nb; k++)
     {
-sprintf(str, "%sCENT%d_%d", "HQx", k * 10, (k + 1) * 10);
+        sprintf(str, "%sCENT%d_%d", "HQx", k * 10, (k + 1) * 10);
         STR = (char *)str;
-        HQxKor[k]= (TH1F *)fC->Get(STR);
-sprintf(str, "%sCENT%d_%d", "HQy", k * 10, (k + 1) * 10);
+        HQxKor[k] = (TH1F *)fC->Get(STR);
+        sprintf(str, "%sCENT%d_%d", "HQy", k * 10, (k + 1) * 10);
         STR = (char *)str;
-        HQyKor[k]= (TH1F *)fC->Get(STR);
+        HQyKor[k] = (TH1F *)fC->Get(STR);
 
-QxMEAN[k]=HQxKor[k]->GetMean();QxSIGMA[k]=HQxKor[k]->GetRMS()/pow(HQxKor[k]->GetEntries(),0.5);
-QyMEAN[k]=HQyKor[k]->GetMean();QySIGMA[k]=HQyKor[k]->GetRMS()/pow(HQyKor[k]->GetEntries(),0.5);
+        QxMEAN[k] = HQxKor[k]->GetMean();
+        QxSIGMA[k] = HQxKor[k]->GetRMS() / pow(HQxKor[k]->GetEntries(), 0.5);
+        QyMEAN[k] = HQyKor[k]->GetMean();
+        QySIGMA[k] = HQyKor[k]->GetRMS() / pow(HQyKor[k]->GetEntries(), 0.5);
     }
 }
 
-
-double KorPSI(double Psi,int cent)
+double KorPSI(double Psi, int cent)
 {
-double kor=0;
-for (int g = 0; g < garm; g++)
-    {kor+=(-MeanSinP[cent][g]*cos(Psi*(g+1)/2)+MeanCosP[cent][g]*sin(Psi*(g+1)/2))*2/(1+g);};
-return kor;
+    double kor = 0;
+    for (int g = 0; g < garm; g++)
+    {
+        kor += (-MeanSinP[cent][g] * cos(Psi * (g + 1) / 2) + MeanCosP[cent][g] * sin(Psi * (g + 1) / 2)) * 2 / (1 + g);
+    };
+    return kor;
 }
 
-double PHIn(double x, double y,int cent)
+double PHIn(double x, double y, int cent)
 {
-    double PHIn = TMath::ATan2((y-QyMEAN[cent])/QySIGMA[cent], (x-QxMEAN[cent])/QxSIGMA[cent]);
+    double PHIn = TMath::ATan2((y - QyMEAN[cent]) / QySIGMA[cent], (x - QxMEAN[cent]) / QxSIGMA[cent]);
     if (PHIn < 0)
     {
-        return PHIn + 2 * Pi;
-    }
-    else if (x == 0 && y == 0)
-    {
-        return -999;
+        PHIn = PHIn + 2 * Pi;
     }
 
-    return PHIn;
+    return PHIn / n;
 }
-
-
-
-
-
 
 void MyClass::Loop()
 {
-    int n = 2, t = 2;
+    int t = 0;
     double Ntree = 0;
-double Mf[Nb],dMf[Nb][NN];
+    double Mf[Nb], dMf[Nb][NN];
 
     if (fChain == 0)
         return;
@@ -371,7 +366,8 @@ double Mf[Nb],dMf[Nb][NN];
         //Обнуление переменных
         for (int k = 0; k < Nb; k++)
         {
-            MQ2[k] = 0;Mf[k]=0;
+            MQ2[k] = 0;
+            Mf[k] = 0;
             Vobs[k] = 0;
             Mplus[k] = 0;
             Mminus[k] = 0;
@@ -388,12 +384,13 @@ double Mf[Nb],dMf[Nb][NN];
             Res[k] = 0;
             for (int s = 0; s < NN; s++)
             {
-                DiffMQplus[k][s] = 0;dMf[k][s]=0;
+                DiffMQplus[k][s] = 0;
+                dMf[k][s] = 0;
                 DiffMQminus[k][s] = 0;
                 dVobs[k][s] = 0;
                 dMplus[k][s] = 0;
                 dMminus[k][s] = 0;
-                
+
                 p[k][s] = TComplex(0, 0);
                 p2[k][s] = TComplex(0, 0);
                 mp[k][s] = 0;
@@ -408,7 +405,7 @@ double Mf[Nb],dMf[Nb][NN];
             }
         }
         //hBimp->Fill(bimp);
-hNpart->Fill(nh);
+        hNpart->Fill(nh);
         //rp=2*Pi*(rnd.Rndm());
         //rp=phi0[i]2;
 
@@ -416,7 +413,7 @@ hNpart->Fill(nh);
         {
 
             //hETA->Fill(eta[i]);
-//hPt->Fill(pt);
+            //hPt->Fill(pt);
             for (int k = 0; k < Nb; k++)
             {
                 if (b >= b_bin[k] && b <= b_bin[k + 1])
@@ -428,10 +425,13 @@ hNpart->Fill(nh);
                         {
                             Q[k] += TComplex(cos(n * (phi0[i])), sin(n * (phi0[i])));
                             Q2[k] += TComplex(cos(2 * n * (phi0[i])), sin(2 * n * (phi0[i])));
-                            if(bFlow[i]==1){MCQ[k] += cos(n * (phi0[i] - rp)); Mf[k]+=1;}
+                            if (bFlow[i] == 1)
+                            {
+                                MCQ[k] += cos(n * (phi0[i] - rp));
+                                Mf[k] += 1;
+                            }
                             M[k] += 1;
                         }
-
                     }
                     if (eta[i] > 0.05)
                     {
@@ -444,7 +444,11 @@ hNpart->Fill(nh);
                                 hBin_Pt[k][m]->Fill(pt[i]);
                                 p2[k][m] += TComplex(cos(2 * n * (phi0[i])), sin(2 * n * (phi0[i])));
                                 p[k][m] += TComplex(cos(n * (phi0[i])), sin(n * (phi0[i])));
-                                if(bFlow[i]==1){QMC[k][m] += (cos(n * (phi0[i] - rp)));dMf[k][m]+=1;}
+                                if (bFlow[i] == 1)
+                                {
+                                    QMC[k][m] += (cos(n * (phi0[i] - rp)));
+                                    dMf[k][m] += 1;
+                                }
                                 //cout << pt[i] <<" "<<p2[k][m] <<p[k][m] << QMC[k][m]<< Q[k] <<mp[k][m]<<endl;
                             }
                         }
@@ -466,48 +470,47 @@ hNpart->Fill(nh);
         {
             if (b >= b_bin[k] && b <= b_bin[k + 1])
             {
-                PSIplus[k] = PHIn(Qplus[k].Re(),Qplus[k].Im(),k);
-                PSIminus[k] = PHIn(Qminus[k].Re(), Qminus[k].Im(),k);
-//PSIplus[k]=KorPSI(PSIplus[k]/2,k);
-//PSIminus[k] =KorPSI(PSIminus[k]/2,k);
-hdPHI->Fill(PSIplus[k]);hdPHI->Fill(PSIminus[k]);
-                HRES[k]->Fill(cos(PSIplus[k] - PSIminus[k]));
+                PSIplus[k] = PHIn(Qplus[k].Re(), Qplus[k].Im(), k);
+                PSIminus[k] = PHIn(Qminus[k].Re(), Qminus[k].Im(), k);
+                //PSIplus[k]=KorPSI(PSIplus[k]/2,k);
+                //PSIminus[k] =KorPSI(PSIminus[k]/2,k);
+                hdPHI->Fill(PSIplus[k]);
+                hdPHI->Fill(PSIminus[k]);
+                HRES[k]->Fill(cos(n * PSIplus[k] - n * PSIminus[k]));
 
                 for (int m = 0; m < NN; m++)
                 {
-                    HDiffRES[k][m]->Fill(cos(PSIplus[k] - PSIminus[k]));
+                    HDiffRES[k][m]->Fill(cos(n * PSIplus[k] - n * PSIminus[k]));
                 }
                 for (int i = 0; i < nh; i++)
                 {
                     if (eta[i] > 0.05)
                     {
-                        Vobs[k] += cos(n * phi0[i] - PSIminus[k]);
+                        Vobs[k] += cos(n * phi0[i] - n * PSIminus[k]);
                         Mplus[k] += 1;
 
                         for (int m = 0; m < NN; m++)
                         {
                             if (pt[i] >= pt_bin[m] && pt[i] < pt_bin[m + 1])
                             {
-                                
-                                    dVobs[k][m] += cos(n * phi0[i] - PSIminus[k]);
-                                    dMplus[k][m] += 1;
-                                
+
+                                dVobs[k][m] += cos(n * phi0[i] - n * PSIminus[k]);
+                                dMplus[k][m] += 1;
                             }
                         }
                     }
 
                     if (eta[i] < -0.05)
                     {
-                        Vobs[k] += cos(n * phi0[i] - PSIplus[k]);
+                        Vobs[k] += cos(n * phi0[i] - n * PSIplus[k]);
                         Mminus[k] += 1;
                         for (int m = 0; m < NN; m++)
                         {
                             if (pt[i] >= pt_bin[m] && pt[i] < pt_bin[m + 1])
                             {
-                                
-                                    dVobs[k][m] += cos(n * phi0[i] - PSIplus[k]);
-                                    dMminus[k][m] += 1;
-                                
+
+                                dVobs[k][m] += cos(n * phi0[i] - n * PSIplus[k]);
+                                dMminus[k][m] += 1;
                             }
                         }
                     }
@@ -520,18 +523,21 @@ hdPHI->Fill(PSIplus[k]);hdPHI->Fill(PSIminus[k]);
             //Res[k] = cos(PHI[k] - rp * n);
             if (Mplus[k] != 0 && Mminus[k] != 0)
             {
-                HVobs[k]->Fill(Vobs[k] / (Mplus[k] + Mminus[k]), Mplus[k] + Mminus[k]);HQx[k]->Fill(Qplus[k].Re());HQy[k]->Fill(Qplus[k].Im());HQx[k]->Fill(Qminus[k].Re());HQy[k]->Fill(Qminus[k].Im());
-    
+                HVobs[k]->Fill(Vobs[k] / (Mplus[k] + Mminus[k]), Mplus[k] + Mminus[k]);
+                HQx[k]->Fill(Qplus[k].Re());
+                HQy[k]->Fill(Qplus[k].Im());
+                HQx[k]->Fill(Qminus[k].Re());
+                HQy[k]->Fill(Qminus[k].Im());
             }
             MQ2[k] = M[k] * (M[k] - 1);
             MQ4[k] = M[k] * (M[k] - 1) * (M[k] - 2) * (M[k] - 3);
             ZQQQ[k] = Q2[k] * Sopr(Q[k]) * Sopr(Q[k]);
             sv4[k] = ((Q[k] * Q[k] * Sopr(Q[k]) * Sopr(Q[k])).Re() + (Q2[k] * Sopr(Q2[k])).Re() - 2 * ((ZQQQ[k]).Re()) - 2 * 2 * (M[k] - 2) * Q[k].Rho2() + 2 * M[k] * (M[k] - 3)) / MQ4[k];
             sv2[k] = (Q[k].Rho2() - M[k]) / MQ2[k];
-     
+
             if (MQ2[k] != 0)
             {
-            
+
                 //HEvPl[k]->Fill((QEvPl[k]/MQEvPl[k])/HPHI[k]->GetMean(),MQEvPl[k]);
                 SV2[k]->Fill(sv2[k], MQ2[k]);
 
@@ -542,9 +548,11 @@ hdPHI->Fill(PSIplus[k]);hdPHI->Fill(PSIminus[k]);
                 SINf1f2[k]->Fill((Q[k] * Q[k] - Q2[k]).Im() / (M[k] * (M[k] - 1)), M[k] * (M[k] - 1));
                 COSf1f2f3[k]->Fill(((Q[k] * Sopr(Q[k]) * Sopr(Q[k]) - Q[k] * Sopr(Q2[k])).Re() - 2 * (M[k] - 1) * Sopr(Q[k]).Re()) / (M[k] * (M[k] - 1) * (M[k] - 2)), M[k] * (M[k] - 1) * (M[k] - 2));
                 SINf1f2f3[k]->Fill(((Q[k] * Sopr(Q[k]) * Sopr(Q[k]) - Q[k] * Sopr(Q2[k])).Im() - 2 * (M[k] - 1) * Sopr(Q[k]).Im()) / (M[k] * (M[k] - 1) * (M[k] - 2)), M[k] * (M[k] - 1) * (M[k] - 2));
-                
             }
-            if(Mf[k]!=0){HMC[k]->Fill(MCQ[k] / Mf[k]);}
+            if (Mf[k] != 0)
+            {
+                HMC[k]->Fill(MCQ[k] / Mf[k]);
+            }
             if (MQ4[k] != 0)
             {
                 //cout << " " << M[k] << endl;
@@ -569,7 +577,10 @@ hdPHI->Fill(PSIplus[k]);hdPHI->Fill(PSIminus[k]);
                 {
                     HDiffVobs[k][s]->Fill(dVobs[k][s] / (dMplus[k][s] + dMminus[k][s]), dMplus[k][s] + dMminus[k][s]);
                 }
-if(dMf[k][s]!=0){DiffMC[k][s]->Fill(QMC[k][s]);}
+                if (dMf[k][s] != 0)
+                {
+                    DiffMC[k][s]->Fill(QMC[k][s]);
+                }
                 if (DiffMQ2[k][s] != 0 && DiffMQ4[k][s] != 0 && MQ2[k] != 0 && MQ4[k] != 0)
                 {
                     DiffSV2[k][s]->Fill(Diffsv2[k][s], DiffMQ2[k][s]);
@@ -635,7 +646,8 @@ void MyClass::SaveData(const char *outfile)
         SV2[k]->Write();
         HVobs[k]->Write();
         HRES[k]->Write();
-        HQx[k]->Write();HQy[k]->Write();
+        HQx[k]->Write();
+        HQy[k]->Write();
         HPHI[k]->Write();
         HEvPl[k]->Write();
         HRES[k]->Write();
@@ -648,10 +660,11 @@ void MyClass::SaveData(const char *outfile)
         SINf1[k]->Write();
         SINf1f2[k]->Write();
         SINf1f2f3[k]->Write();
-for (int g = 0; g < garm; g++)
-    {
-        HMeanCosP[k][g]->Write();HMeanSinP[k][g]->Write();
-     }
+        for (int g = 0; g < garm; g++)
+        {
+            HMeanCosP[k][g]->Write();
+            HMeanSinP[k][g]->Write();
+        }
         for (int s = 0; s < NN; s++)
         {
             DiffSV2[k][s]->Write();
