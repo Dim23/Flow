@@ -33,11 +33,6 @@ void read(const char *infile, const char *savefile = "~/GIT/NoneFlow30_40.root")
     gROOT->SetStyle("Pub");
     gROOT->ForceStyle();
 
-    double b_bin[9] = {0.0, 4.18, 6.01, 7.37, 8.52, 9.57, 10.55, 11.46, 12.31};
-    static const int Nb = 8;
-    double pt_bin[13] = {0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.2, 2.6, 3.0, 3.5};
-    static const int NN = 12;
-
     double RMSdn2[Nb][NN];
     double RMSv2[Nb][NN];
     double RMSdn4[Nb][NN];
@@ -211,7 +206,7 @@ void read(const char *infile, const char *savefile = "~/GIT/NoneFlow30_40.root")
     d_outfile->cd();
 
 
-
+cout<<""<<endl;
 
 
 
